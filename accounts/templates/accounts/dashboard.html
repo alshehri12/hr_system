@@ -1,0 +1,160 @@
+<!-- accounts/templates/accounts/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}NCEC | Dashboard{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Info Boxes -->
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="info-box">
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-calendar"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Vacation Balance</span>
+                <span class="info-box-number">{{ vacation_balance }} days</span>
+            </div>
+        </div>
+    </div>
+
+    {% if user.type == 'ADMIN' or user.type == 'HR' %}
+    <!-- Admin Stats -->
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="info-box">
+            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Employees</span>
+                <span class="info-box-number">{{ total_employees }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-clock"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Today's Attendance</span>
+                <span class="info-box-number">{{ today_attendance_count }}</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not user.type == 'ADMIN' and not user.type == 'HR' %}
+    <!-- Employee Attendance -->
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-clock"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Today's Status</span>
+                <span class="info-box-number">
+                    {% if today_attendance %}
+                        {% if today_attendance.check_in %}
+                            Checked in at {{ today_attendance.check_in|time:"H:i" }}
+                        {% else %}
+                            Not checked in
+                        {% endif %}
+                    {% else %}
+                        Not recorded
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    <!-- Main Content Card -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {% if user.type == 'ADMIN' or user.type == 'HR' %}
+                    Pending Vacation Requests
+                    {% else %}
+                    My Recent Vacation Requests
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            {% if user.type == 'ADMIN' or user.type == 'HR' %}
+                            <th>Employee</th>
+                            {% endif %}
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in vacation_requests %}
+                        <tr>
+                            {% if user.type == 'ADMIN' or user.type == 'HR' %}
+                            <td>{{ request.employee.get_full_name }}</td>
+                            {% endif %}
+                            <td>{{ request.start_date }}</td>
+                            <td>{{ request.end_date }}</td>
+                            <td>{{ request.get_duration }} days</td>
+                            <td>
+                                <span class="badge {% if request.status == 'APPROVED' %}badge-success
+                                               {% elif request.status == 'REJECTED' %}badge-danger
+                                               {% else %}badge-warning{% endif %}">
+                                    {{ request.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No vacation requests found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                {% if not user.type == 'ADMIN' and not user.type == 'HR' %}
+                <!-- Employee Actions -->
+                <form method="post" action="{% url 'hr:employee-attendance-check' %}" class="mb-3">
+                    {% csrf_token %}
+                    {% if not today_attendance or not today_attendance.check_in %}
+                        <input type="hidden" name="action" value="check_in">
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Check In
+                        </button>
+                    {% elif not today_attendance.check_out %}
+                        <input type="hidden" name="action" value="check_out">
+                        <button type="submit" class="btn btn-danger btn-block">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Check Out
+                        </button>
+                    {% endif %}
+                </form>
+                <a href="{% url 'hr:employee-vacation-create' %}" class="btn btn-primary btn-block">
+                    <i class="fas fa-plus mr-2"></i>Request Vacation
+                </a>
+                {% else %}
+                <!-- Admin Actions -->
+                <a href="{% url 'hr:admin-vacation-list' %}" class="btn btn-primary btn-block mb-3">
+                    <i class="fas fa-calendar-check mr-2"></i>Manage Vacations
+                </a>
+                <a href="{% url 'hr:admin-attendance-list' %}" class="btn btn-info btn-block">
+                    <i class="fas fa-clock mr-2"></i>View Attendance
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

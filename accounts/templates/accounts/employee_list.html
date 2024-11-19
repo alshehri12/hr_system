@@ -1,0 +1,115 @@
+<!-- accounts/templates/accounts/employee_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}Employees | NCEC{% endblock %}
+{% block page_title %}Employees Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-users mr-2"></i>
+                    Employees List
+                </h3>
+                <div class="card-tools">
+                    <a href="{% url 'accounts:employee-create' %}" class="btn btn-success btn-sm">
+                        <i class="fas fa-user-plus mr-1"></i> Create User
+                    </a>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Employee ID</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Hire Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employees %}
+                        <tr>
+                            <td>
+                                {% if employee.profile_picture %}
+                                    <img src="{{ employee.profile_picture.url }}" 
+                                         class="img-circle mr-2" alt="User Image" 
+                                         style="width: 30px; height: 30px;">
+                                {% else %}
+                                    <i class="fas fa-user-circle mr-2" style="font-size: 30px; color: #ccc;"></i>
+                                {% endif %}
+                                {{ employee.get_full_name }}
+                            </td>
+                            <td>{{ employee.employee_id }}</td>
+                            <td>{{ employee.email }}</td>
+                            <td>{{ employee.phone_number|default:"-" }}</td>
+                            <td>
+                                <span class="badge badge-{% if employee.type == 'ADMIN' %}danger
+                                                     {% elif employee.type == 'HR' %}info
+                                                     {% else %}success{% endif %}">
+                                    {{ employee.get_type_display }}
+                                </span>
+                            </td>
+                            <td>{{ employee.hire_date|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="badge badge-{% if employee.is_active %}success{% else %}danger{% endif %}">
+                                    {% if employee.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'accounts:employee-detail' employee.pk %}" 
+                                       class="btn btn-info btn-sm" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'accounts:employee-edit' employee.pk %}" 
+                                       class="btn btn-primary btn-sm" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-3">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                No employees found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if employees.has_other_pages %}
+            <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-right">
+                    {% if employees.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ employees.previous_page_number }}">&laquo;</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for i in employees.paginator.page_range %}
+                    <li class="page-item {% if employees.number == i %}active{% endif %}">
+                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                    {% endfor %}
+                    
+                    {% if employees.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ employees.next_page_number }}">&raquo;</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

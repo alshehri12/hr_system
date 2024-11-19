@@ -1,0 +1,74 @@
+<!-- hr/templates/hr/employee/vacation_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}My Vacations | NCEC{% endblock %}
+{% block page_title %}My Vacation Requests{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-calendar mr-2"></i>
+                    Vacation Requests History
+                </h3>
+                <div class="card-tools">
+                    <a href="{% url 'hr:employee-vacation-create' %}" class="btn btn-success btn-sm">
+                        <i class="fas fa-plus mr-1"></i> New Request
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Your current vacation balance: <strong>{{ user.vacation_balance }} days</strong>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Request Date</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Duration</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in vacation_requests %}
+                            <tr>
+                                <td>{{ request.created_at|date:"M d, Y" }}</td>
+                                <td>{{ request.start_date }}</td>
+                                <td>{{ request.end_date }}</td>
+                                <td>{{ request.get_duration }} days</td>
+                                <td>{{ request.reason|truncatechars:50 }}</td>
+                                <td>
+                                    <span class="badge badge-{% if request.status == 'APPROVED' %}success
+                                                         {% elif request.status == 'REJECTED' %}danger
+                                                         {% elif request.status == 'CANCELLED' %}secondary
+                                                         {% else %}warning{% endif %}">
+                                        {{ request.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ request.comments|default:"-"|truncatechars:50 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    No vacation requests found. 
+                                    <a href="{% url 'hr:employee-vacation-create' %}">Create your first request</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

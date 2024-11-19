@@ -1,0 +1,64 @@
+# hr/templates/hr/employee/vacation_request_list.html
+{% extends 'base.html' %}
+
+{% block title %}My Vacation Requests | EMS{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">My Vacation Requests</h5>
+        <a href="{% url 'hr:employee-vacation-create' %}" class="btn btn-light">New Request</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Duration</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Submitted On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in vacation_requests %}
+                    <tr>
+                        <td>{{ request.start_date }}</td>
+                        <td>{{ request.end_date }}</td>
+                        <td>{{ request.get_duration }} days</td>
+                        <td>{{ request.reason|truncatechars:50 }}</td>
+                        <td>
+                            <span class="badge {% if request.status == 'APPROVED' %}bg-success
+                                           {% elif request.status == 'REJECTED' %}bg-danger
+                                           {% elif request.status == 'CANCELED' %}bg-secondary
+                                           {% else %}bg-warning{% endif %}">
+                                {{ request.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ request.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No vacation requests found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h6 class="mb-0">Vacation Balance: {{ user.vacation_balance }} days</h6>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="{% url 'hr:employee-vacation-create' %}" class="btn btn-primary">
+                    Request New Vacation
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

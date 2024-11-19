@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Vacation Request Detail | EMS{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Vacation Request Details</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Employee</dt>
+                    <dd class="col-sm-8">{{ vacation_request.employee.get_full_name }}</dd>
+
+                    <dt class="col-sm-4">Start Date</dt>
+                    <dd class="col-sm-8">{{ vacation_request.start_date }}</dd>
+
+                    <dt class="col-sm-4">End Date</dt>
+                    <dd class="col-sm-8">{{ vacation_request.end_date }}</dd>
+
+                    <dt class="col-sm-4">Duration</dt>
+                    <dd class="col-sm-8">{{ vacation_request.get_duration }} days</dd>
+
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge {% if vacation_request.status == 'APPROVED' %}bg-success
+                                       {% elif vacation_request.status == 'REJECTED' %}bg-danger
+                                       {% elif vacation_request.status == 'CANCELED' %}bg-secondary
+                                       {% else %}bg-warning{% endif %}">
+                            {{ vacation_request.get_status_display }}
+                        </span>
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <h6>Reason:</h6>
+                <p>{{ vacation_request.reason }}</p>
+
+                {% if vacation_request.comments %}
+                    <h6>Comments:</h6>
+                    <p>{{ vacation_request.comments }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if user.type in 'ADMIN,HR' and vacation_request.status == 'PENDING' %}
+            <hr>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="text-end">
+                    <button type="submit" name="action" value="approve" 
+                            class="btn btn-success">Approve</button>
+                    <button type="submit" name="action" value="reject" 
+                            class="btn btn-danger">Reject</button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
