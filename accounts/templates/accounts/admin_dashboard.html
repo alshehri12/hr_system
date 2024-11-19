@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard | EMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Welcome Card -->
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title">Welcome, {{ user.get_full_name }}</h2>
+                    <p class="text-muted">{{ user.get_type_display }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title">Total Employees</h6>
+                            <h2 class="mb-0">{{ total_employees }}</h2>
+                        </div>
+                        <i class="fas fa-users fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title">Pending Vacation Requests</h6>
+                            <h2 class="mb-0">{{ pending_vacations }}</h2>
+                        </div>
+                        <i class="fas fa-clock fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title">Today's Attendance</h6>
+                            <h2 class="mb-0">{{ today_attendance_count }}</h2>
+                        </div>
+                        <i class="fas fa-check-circle fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'hr:admin-vacation-list' %}" 
+                               class="btn btn-outline-primary w-100">
+                                <i class="fas fa-calendar-check me-2"></i>
+                                Manage Vacation Requests
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="#" class="btn btn-outline-info w-100">
+                                <i class="fas fa-users me-2"></i>
+                                Manage Employees
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="#" class="btn btn-outline-success w-100">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                View Reports
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Recent Vacation Requests</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_vacation_requests %}
+                    <div class="list-group list-group-flush">
+                        {% for request in recent_vacation_requests %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ request.employee.get_full_name }}</h6>
+                                <small class="text-muted">{{ request.created_at|date }}</small>
+                            </div>
+                            <p class="mb-1">{{ request.start_date }} to {{ request.end_date }}</p>
+                            <small class="text-muted">Status: {{ request.get_status_display }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No recent vacation requests.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Today's Attendance Summary</h5>
+                </div>
+                <div class="card-body">
+                    {% if today_attendance_list %}
+                    <div class="list-group list-group-flush">
+                        {% for attendance in today_attendance_list %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ attendance.employee.get_full_name }}</h6>
+                                <small class="text-muted">
+                                    {% if attendance.check_in %}
+                                    Checked in: {{ attendance.check_in|time }}
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <small class="text-muted">
+                                Status: 
+                                {% if attendance.check_out %}
+                                Checked out at {{ attendance.check_out|time }}
+                                {% elif attendance.check_in %}
+                                Currently working
+                                {% else %}
+                                Not checked in
+                                {% endif %}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No attendance records for today.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

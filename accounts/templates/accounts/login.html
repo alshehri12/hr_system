@@ -1,0 +1,117 @@
+<!-- accounts/templates/accounts/login.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NCEC | Login</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.min.css">
+    <!-- AdminLTE -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
+    <style>
+        .login-page {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9ed 100%);
+        }
+        .login-logo img {
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #006C35;
+            border-color: #006C35;
+        }
+        .btn-primary:hover {
+            background-color: #005128;
+            border-color: #005128;
+        }
+        .login-box {
+            width: 420px;
+        }
+    </style>
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+    <!-- Logo -->
+    <div class="login-logo">
+        <img src="{% static 'images/ncec.png' %}" alt="NCEC Logo">
+    </div>
+
+    <!-- Login Card -->
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">Sign in to start your session</p>
+
+            <form method="post">
+                {% csrf_token %}
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    Invalid username or password
+                </div>
+                {% endif %}
+
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="username" placeholder="Username">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-user"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" name="password" placeholder="Password">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Test Credentials -->
+            <div class="mt-4">
+                <hr>
+                {% comment %} <p class="text-center text-muted">Test Credentials</p> {% endcomment %}
+                <div class="row">
+                    {% comment %} <div class="col-6 text-center">
+                        <small>
+                            <strong>Admin</strong><br>
+                            Username: admin<br>
+                            Password: admin123
+                        </small>
+                    </div>
+                    <div class="col-6 text-center">
+                        <small>
+                            <strong>Employee</strong><br>
+                            Username: employee<br>
+                            Password: emp123
+                        </small>
+                    </div> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!-- hr/templates/hr/employee/vacation_request_form.html -->
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Request Vacation | NCEC{% endblock %}
+{% block page_title %}Submit Vacation Request{% endblock %}
+
+{% block content %}
+<div class="row">
+   <div class="col-md-8">
+       <div class="card">
+           <div class="card-header">
+               <h3 class="card-title">
+                   <i class="fas fa-calendar-plus mr-2"></i>
+                   New Vacation Request
+               </h3>
+           </div>
+           <div class="card-body">
+               <div class="alert alert-info">
+                   <i class="fas fa-info-circle mr-2"></i>
+                   Your current vacation balance: <strong>{{ user.vacation_balance }} days</strong>
+               </div>
+
+               <form method="post">
+                   {% csrf_token %}
+                   
+                   <div class="row">
+                       <div class="col-md-6">
+                           {{ form.start_date|as_crispy_field }}
+                       </div>
+                       <div class="col-md-6">
+                           {{ form.end_date|as_crispy_field }}
+                       </div>
+                   </div>
+
+                   <div class="form-group">
+                       {{ form.reason|as_crispy_field }}
+                   </div>
+
+                   <div class="text-right">
+                       <a href="{% url 'hr:employee-vacation-list' %}" class="btn btn-secondary">
+                           <i class="fas fa-times mr-1"></i> Cancel
+                       </a>
+                       <button type="submit" class="btn btn-primary">
+                           <i class="fas fa-paper-plane mr-1"></i> Submit Request
+                       </button>
+                   </div>
+               </form>
+           </div>
+       </div>
+   </div>
+
+   <div class="col-md-4">
+       <div class="card">
+           <div class="card-header">
+               <h3 class="card-title">
+                   <i class="fas fa-info-circle mr-2"></i>
+                   Guidelines
+               </h3>
+           </div>
+           <div class="card-body">
+               <ul class="list-unstyled">
+                   <li><i class="fas fa-check text-success mr-2"></i>Submit at least 3 days in advance</li>
+                   <li><i class="fas fa-check text-success mr-2"></i>Provide clear reason for leave</li>
+                   <li><i class="fas fa-check text-success mr-2"></i>Check your vacation balance</li>
+                   <li><i class="fas fa-check text-success mr-2"></i>Wait for approval notification</li>
+               </ul>
+           </div>
+       </div>
+   </div>
+</div>
+{% endblock %}

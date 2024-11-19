@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit Profile | NCEC{% endblock %}
+{% block page_title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="row">
+   <div class="col-md-8">
+       <div class="card">
+           <div class="card-header">
+               <h3 class="card-title">
+                   <i class="fas fa-user-edit mr-2"></i>
+                   Edit Personal Information
+               </h3>
+           </div>
+           <div class="card-body">
+               <form method="post" enctype="multipart/form-data">
+                   {% csrf_token %}
+                   
+                   <div class="row">
+                       <div class="col-md-6">
+                           {{ form.first_name|as_crispy_field }}
+                       </div>
+                       <div class="col-md-6">
+                           {{ form.last_name|as_crispy_field }}
+                       </div>
+                   </div>
+
+                   <div class="row">
+                       <div class="col-md-6">
+                           {{ form.email|as_crispy_field }}
+                       </div>
+                       <div class="col-md-6">
+                           {{ form.phone_number|as_crispy_field }}
+                       </div>
+                   </div>
+
+                   <div class="row">
+                       <div class="col-md-6">
+                           {{ form.date_of_birth|as_crispy_field }}
+                       </div>
+                       <div class="col-md-6">
+                           {{ form.profile_picture|as_crispy_field }}
+                       </div>
+                   </div>
+
+                   {{ form.address|as_crispy_field }}
+
+                   <div class="text-right">
+                       <a href="{% url 'accounts:profile' %}" class="btn btn-secondary">
+                           <i class="fas fa-times mr-1"></i> Cancel
+                       </a>
+                       <button type="submit" class="btn btn-primary">
+                           <i class="fas fa-save mr-1"></i> Save Changes
+                       </button>
+                   </div>
+               </form>
+           </div>
+       </div>
+   </div>
+
+   <div class="col-md-4">
+       <div class="card">
+           <div class="card-header">
+               <h3 class="card-title">
+                   <i class="fas fa-info-circle mr-2"></i>
+                   Profile Guidelines
+               </h3>
+           </div>
+           <div class="card-body">
+               <ul class="list-unstyled">
+                   <li class="mb-2">
+                       <i class="fas fa-check text-success mr-2"></i>
+                       Keep your contact information up to date
+                   </li>
+                   <li class="mb-2">
+                       <i class="fas fa-check text-success mr-2"></i>
+                       Use a professional profile picture
+                   </li>
+                   <li class="mb-2">
+                       <i class="fas fa-check text-success mr-2"></i>
+                       Provide complete address details
+                   </li>
+                   <li class="mb-2">
+                       <i class="fas fa-check text-success mr-2"></i>
+                       Ensure email address is active
+                   </li>
+               </ul>
+           </div>
+       </div>
+   </div>
+</div>
+{% endblock %}
