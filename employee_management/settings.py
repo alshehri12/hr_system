@@ -19,7 +19,8 @@ from dotenv import load_dotenv
 
 
 
-TIME_ZONE = 'Asia/Riyadh'
+
+TIME_ZONE = 'your_timezone'
 
 USE_I18N = True
 USE_L10N = True

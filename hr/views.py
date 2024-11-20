@@ -19,6 +19,8 @@ from .models import VacationRequest
 from accounts.models import Employee
 from django.utils.timezone import localtime
 from django.utils import timezone
+from datetime import datetime, timedelta
+
 
 # Employee Views
 
@@ -204,7 +206,7 @@ class EmployeeVacationListView(LoginRequiredMixin, ListView):
 class EmployeeAttendanceView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         action = request.POST.get('action')
-        today = timezone.localtime().date()
+        today = timezone.now().date()
         
         attendance, created = Attendance.objects.get_or_create(
             employee=request.user,
@@ -212,14 +214,18 @@ class EmployeeAttendanceView(LoginRequiredMixin, View):
         )
         
         if action == 'check_in' and not attendance.check_in:
-            attendance.check_in = timezone.localtime()
+            attendance.check_in = timezone.now() + timedelta(hours=3)  # Add 3 hours to the current time
             attendance.save()
-            messages.success(request, 'Checked in successfully!')
+            messages.success(request, f'Checked in at {localtime(attendance.check_in).strftime("%I:%M %p")}')
+            
         elif action == 'check_out' and attendance.check_in and not attendance.check_out:
-            attendance.check_out = timezone.localtime()
+            attendance.check_out = timezone.now() + timedelta(hours=3)  # Add 3 hours to the current time
             attendance.save()
-            messages.success(request, 'Checked out successfully!')
-        
+            messages.success(request, f'Checked out at {localtime(attendance.check_out).strftime("%I:%M %p")}')
+            
         return redirect('hr:employee-attendance-list')
+
+
+
 
 

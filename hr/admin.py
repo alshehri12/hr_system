@@ -27,18 +27,7 @@ class VacationRequestAdmin(admin.ModelAdmin):
 
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ('employee', 'date', 'check_in', 'check_out', 'is_present')
-    list_filter = ('date', 'is_present', 'employee')
-    search_fields = ('employee__username', 'employee__email', 'notes')
-    
-    fieldsets = (
-        (None, {
-            'fields': ('employee', 'date', 'is_present')
-        }),
-        ('Time Records', {
-            'fields': ('check_in', 'check_out')
-        }),
-        ('Additional Information', {
-            'fields': ('notes',)
-        }),
-    )
+    list_display = ('employee', 'date', 'check_in', 'check_out', 'is_late', 'is_early_leave')
+    list_filter = ('date', 'is_late', 'is_early_leave')
+    search_fields = ('employee__first_name', 'employee__last_name', 'employee__employee_id')
+    date_hierarchy = 'date'
